@@ -1,0 +1,30 @@
+##linear regression
+##free run
+from sklearn import linear_model
+from sklearn.linear_model import LinearRegression
+import numpy as np
+aa=80
+bb=36
+
+fr_contribution=np.zeros((3,132,220))
+for aa in range(0,132):
+    for bb in range(0,220):
+        x_train=np.zeros((8,3))
+        x_train[:,0]=norm_yearly_gtemp[:,aa,bb]
+        x_train[:,1]=norm_yearly_rain[:,aa,bb]
+        x_train[:,2]=norm_yearly_irrig[:,aa,bb]
+        if np.isnan(np.mean(x_train))==True:
+            contribution[0,aa,bb]=np.nan
+            contribution[1,aa,bb]=np.nan
+            contribution[2,aa,bb]=np.nan
+        if np.isnan(np.mean(x_train))==False:
+            line_fitter = LinearRegression()
+            y=norm_yearly_frtwsa[:,aa,bb]
+            line_fitter.fit(x_train, y)
+            fr_contribution[0,aa,bb]=(abs(line_fitter.coef_[0]))/(abs(line_fitter.coef_[0])+abs(line_fitter.coef_[1])+abs(line_fitter.coef_[2]))
+            fr_contribution[1,aa,bb]=(abs(line_fitter.coef_[1]))/(abs(line_fitter.coef_[0])+abs(line_fitter.coef_[1])+abs(line_fitter.coef_[2]))
+            fr_contribution[2,aa,bb]=(abs(line_fitter.coef_[2]))/(abs(line_fitter.coef_[0])+abs(line_fitter.coef_[1])+abs(line_fitter.coef_[2]))
+
+fr_contribution=fr_contribution*model_mask
+fr_contribution[0,:,:][fr_contribution[0,:,:]==0]=np.nan
+fr_contribution[1,:,:][fr_contribution[1,:,:]==0]=np.nan
