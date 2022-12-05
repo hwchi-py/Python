@@ -1,0 +1,69 @@
+#!/bin/csh -f
+
+#########################DA process#########################
+sleep 5s
+
+@ a = 13
+while ($a <= 13)  #1 year=13, 8 year=97
+sleep 1s
+matlab -nodesktop -nosplash -r 'run /home/hwchi/DA/test/eda_0719.m'
+
+@ en = 1
+while ($en <= 40) 
+
+set fname=eda_$en
+cd /home/hwchi/CESM/cesm/cime/scripts/$fname
+
+./xmlchange STOP_OPTION=nmonths
+./xmlchange STOP_N=1
+./xmlchange CONTINUE_RUN=TRUE
+
+sleep 1s
+
+qsub .case.run
+
+sleep 2s
+
+cd /home/hwchi/MODEL/CESM2/cesm2.0.0/cases/$fname/run
+set dd=`find -type f -name "$fname.clm2.r.*.nc" | wc -l`
+
+while ($dd < $a) 
+    set dd=`find -type f -name "$fname.clm2.r.*.nc" | wc -l`
+    echo "$dd"
+end
+if ($dd == $a) then
+    set dd=`find -type f -name "$fname.clm2.r.*.nc" | wc -l`
+    echo "$dd"
+endif
+
+sleep 10s
+
+rm -rf $fname.clm2.h1.*.nc
+mv $fname.clm2.h0.*.nc /data1/hwchi/da_0729/$fname
+
+sleep 10s
+
+@ en ++
+end
+@ a ++
+end
+
+
+#########################ignore below line#########################
+#########################End of DA process#########################
+#if ($dd == 98) then
+#    @c = 1
+#    while($c<= 40)
+#        set f_en=op_da$c
+#        cd /home/hwchi/CESM/cesm/cime/scripts/$f_en
+#        qsub .case.run  
+#        cd /home/hwchi/MODEL/CESM2/cesm2.0.0/cases/op_da$f_en/run
+#        set ff=`find -type f -name "op_da$f_en.clm2.h0.*.nc" | wc -l`
+#            if ($ff == 96) then
+#            endif
+#    @ c ++
+#    end
+#endif
+#end
+
+
