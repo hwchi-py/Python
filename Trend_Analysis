@@ -3,9 +3,6 @@ d=damean_twsa
 f=frmean_twsa
 g=jpl
 
-d_trend=np.zeros((132,220))
-f_trend=np.zeros((132,220))
-g_trend=np.zeros((132,220))
 for aa in range(0,132):
     for bb in range(0,220):
         g_trend[aa,bb]=mk.original_test(g[:,aa,bb]).slope
